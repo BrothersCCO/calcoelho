@@ -235,31 +235,13 @@ public class Calculadora implements ActionListener {
 		}
 	}
 
-	class DigitandoDecimal implements Estado {
-
-		@Override
-		public void eval() {
-			// TODO Auto-generated method stub
-
-		}
-
+	class DigitandoDecimal extends DigitandoNumero implements Estado {
 		@Override
 		public void eval(char x) {
-			// TODO Auto-generated method stub
-
+			if (x == '.') return;
+			digitos += x;
+			show(digitos);
 		}
-
-		@Override
-		public void eval(Operacao op, boolean bin) {
-			// TODO Auto-generated method stub
-
-		}
-
-		public void mem(char x) {
-			// TODO Auto-generated method stub
-
-		}
-
 	}
 
 	public void actionPerformed(ActionEvent e) {
