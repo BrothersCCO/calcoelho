@@ -5,6 +5,7 @@
  */
 
 import javax.swing.*;
+
 import java.awt.event.*;
 
 class Main {
@@ -14,7 +15,7 @@ class Main {
 }
 
 interface Operacao {
-	double op(double[] x);
+	double op(double[] x) throws Exception;
 }
 
 interface Estado {
@@ -25,6 +26,12 @@ interface Estado {
 	void eval(Operacao op, boolean bin);
 
 	void mem(char x);
+
+	void clr(boolean e);
+
+	void pct();
+
+	void con(char x);
 }
 
 public class Calculadora implements ActionListener {
@@ -40,12 +47,37 @@ public class Calculadora implements ActionListener {
 			return -x[1];
 		}
 	}, raiz = new Operacao() {
+		public double op(double[] x) throws Exception {
+			if (x[1] >= 0) {
+				return Math.sqrt(x[1]);
+			}
+			throw new Exception();
+		}
+	}, quadrado = new Operacao() {
 		public double op(double[] x) {
-			return Math.sqrt(x[1]);
+			return Math.pow(x[1], 2);
+		}
+	}, potencia = new Operacao() {
+		public double op(double[] x) {
+			return Math.pow(x[0], x[1]);
+		}
+	}, fatorial = new Operacao() {
+		public double op(double[] x) throws Exception {
+			if (x[1] >= 0) {
+				int fatorial = 1;
+				for (int i = 2; i <= x[1]; ++i) {
+					fatorial *= i;
+				}
+				return fatorial;
+			}
+			throw new Exception();
 		}
 	}, umporx = new Operacao() {
-		public double op(double[] x) {
-			return 1 / x[1];
+		public double op(double[] x) throws Exception {
+			if (x[1] != 0) {
+				return 1 / x[1];
+			}
+			throw new Exception();
 		}
 	}, seno = new Operacao() {
 		public double op(double[] x) {
@@ -56,8 +88,11 @@ public class Calculadora implements ActionListener {
 			return Math.cos(x[1]);
 		}
 	}, tangente = new Operacao() {
-		public double op(double[] x) {
-			return Math.tan(x[1]);
+		public double op(double[] x) throws Exception {
+			if (x[1] % 180 == 90) {
+				return Math.tan(x[1]);
+			}
+			throw new Exception();
 		}
 	}, soma = new Operacao() {
 		public double op(double[] x) {
@@ -72,8 +107,11 @@ public class Calculadora implements ActionListener {
 			return x[0] * x[1];
 		}
 	}, divisao = new Operacao() {
-		public double op(double[] x) {
-			return x[0] / x[1];
+		public double op(double[] x) throws Exception {
+			if (x[1] != 0) {
+				return x[0] / x[1];
+			}
+			throw new Exception();
 		}
 	};
 
@@ -87,10 +125,14 @@ public class Calculadora implements ActionListener {
 	}
 
 	void executar() {
-		System.out.println(acumulado + "-" + valor + "-" + (op == soma));
-		valor = op.op(new double[] { acumulado, valor });
-		digitos = Double.toString(valor);
-		show(digitos);
+		try {
+			valor = op.op(new double[] { acumulado, valor });
+			digitos = Double.toString(valor);
+			show(digitos);
+		} catch (Exception e) {
+			estados[atual].clr(true);
+			show("Erro");
+		}
 	}
 
 	void show(double val) {
@@ -124,7 +166,7 @@ public class Calculadora implements ActionListener {
 
 		public void eval(Operacao s, boolean bin) {
 			if (bin)
-				valor = acumulado;
+				acumulado = valor;
 			op = s;
 			atual = 2;
 			if (!bin) {
@@ -142,6 +184,34 @@ public class Calculadora implements ActionListener {
 			} else if (x == 'A') {
 				mem += Double.parseDouble(visor.getText());
 			}
+		}
+
+		@Override
+		public void pct() {
+			valor = acumulado * Double.parseDouble(visor.getText()) / 100;
+			digitos = Double.toString(valor);
+			show(digitos);
+		}
+
+		public void con(char x) {
+			switch (x) {
+			case 'P':
+				show(Double.toString(Math.PI));
+				break;
+			case 'E':
+				show(Double.toString(Math.E));
+			}
+		}
+
+		public void clr(boolean e) {
+			valor = 0.0;
+			digitos = "0";
+			show(digitos);
+
+			if (e)
+				acumulado = 0.0;
+
+			atual = 0;
 		}
 	}
 
@@ -167,8 +237,10 @@ public class Calculadora implements ActionListener {
 				valor = Double.parseDouble(digitos);
 			} catch (Exception ignorada) {
 			}
-			if (bin)
+			if (bin) {
 				executar();
+				acumulado = valor;
+			}
 			op = s;
 			atual = 2;
 			if (!bin) {
@@ -190,7 +262,34 @@ public class Calculadora implements ActionListener {
 				mem += Double.parseDouble(digitos);
 			}
 			atual = 0;
-			System.out.println(mem);
+		}
+
+		public void pct() {
+			System.out.println(acumulado + "-" + valor);
+			valor = acumulado * Double.parseDouble(visor.getText()) / 100;
+			digitos = Double.toString(valor);
+			show(digitos);
+		}
+
+		public void con(char x) {
+			switch (x) {
+			case 'P':
+				show(Double.toString(Math.PI));
+				break;
+			case 'E':
+				show(Double.toString(Math.E));
+			}
+		}
+
+		public void clr(boolean e) {
+			valor = 0.0;
+			digitos = "0";
+			show(digitos);
+
+			if (e)
+				acumulado = 0.0;
+
+			atual = 0;
 		}
 	}
 
@@ -201,7 +300,6 @@ public class Calculadora implements ActionListener {
 		}
 
 		public void eval(char x) {
-			acumulado = valor;
 			digitos = Character.toString(x);
 			atual = 1;
 			switch (x) {
@@ -233,12 +331,41 @@ public class Calculadora implements ActionListener {
 			else if (x == 'A')
 				mem += Double.parseDouble(visor.getText());
 		}
+
+		public void pct() {
+			System.out.println(acumulado + "-" + valor);
+			valor = acumulado * Double.parseDouble(visor.getText()) / 100;
+			digitos = Double.toString(valor);
+			show(digitos);
+		}
+
+		public void con(char x) {
+			switch (x) {
+			case 'P':
+				show(Double.toString(Math.PI));
+				break;
+			case 'E':
+				show(Double.toString(Math.E));
+			}
+		}
+
+		public void clr(boolean e) {
+			valor = 0.0;
+			digitos = "0";
+			show(digitos);
+
+			if (e)
+				acumulado = 0.0;
+
+			atual = 0;
+		}
 	}
 
 	class DigitandoDecimal extends DigitandoNumero implements Estado {
 		@Override
 		public void eval(char x) {
-			if (x == '.') return;
+			if (x == '.')
+				return;
 			digitos += x;
 			show(digitos);
 		}
@@ -246,6 +373,7 @@ public class Calculadora implements ActionListener {
 
 	public void actionPerformed(ActionEvent e) {
 		String tecla = e.getActionCommand();
+		System.out.println(tecla);
 		if (tecla.charAt(0) == '$')
 			estados[atual].eval(tecla.charAt(1));
 		else if (tecla.charAt(0) == '#')
@@ -260,10 +388,14 @@ public class Calculadora implements ActionListener {
 			estados[atual].eval(produto, true);
 		} else if (tecla.equals("DIVISAO")) {
 			estados[atual].eval(divisao, true);
+		} else if (tecla.equals("POTENCIA")) {
+			estados[atual].eval(potencia, true);
 		} else if (tecla.equals("SINAL")) {
 			estados[atual].eval(sinal, false);
-		} else if (tecla.equals("RAIZ")) {
+		} else if (tecla.equals("RAIZ_QUADRADA")) {
 			estados[atual].eval(raiz, false);
+		} else if (tecla.equals("QUADRADO")) {
+			estados[atual].eval(quadrado, false);
 		} else if (tecla.equals("UMPORX")) {
 			estados[atual].eval(umporx, false);
 		} else if (tecla.equals("SENO")) {
@@ -272,17 +404,14 @@ public class Calculadora implements ActionListener {
 			estados[atual].eval(cosseno, false);
 		} else if (tecla.equals("TANGENTE")) {
 			estados[atual].eval(tangente, false);
+		} else if (tecla.equals("FATORIAL")) {
+			estados[atual].eval(fatorial, false);
+		} else if (tecla.equals("PORCENTAGEM")) {
+			estados[atual].pct();
 		} else if (tecla.equals("RESULTADO")) {
 			estados[atual].eval();
 		} else if (tecla.charAt(0) == 'C') {
-			valor = 0.0;
-			digitos = "0";
-			show(digitos);
-
-			if (tecla.equals("CE"))
-				acumulado = 0.0;
-
-			atual = 0;
+			estados[atual].clr(tecla.equals("CE"));
 		}
 	}
 }

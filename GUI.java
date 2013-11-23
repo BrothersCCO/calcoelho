@@ -9,7 +9,7 @@ public class GUI extends JFrame implements KeyListener {
 
 	public GUI(ActionListener ouvinte) {
 		Container pane = getContentPane();
-		pane.setLayout(new BorderLayout(2, 2));
+		pane.setLayout(new BorderLayout(5, 5));
 
 		visor = new JTextField(msgInicial);
 		visor.setEditable(false);
@@ -19,7 +19,7 @@ public class GUI extends JFrame implements KeyListener {
 
 		pane.add(visor, BorderLayout.NORTH);
 
-		JPanel teclado = new JPanel(new GridLayout(7, 4, 8, 8));
+		JPanel teclado = new JPanel(new GridLayout(7, 5, 8, 8));
 		JButton tecla;
 		
 		tecla = new JButton("MS");
@@ -46,6 +46,12 @@ public class GUI extends JFrame implements KeyListener {
 		teclado.add(tecla);
 		tecla.setFocusable(false);
 		
+		tecla = new JButton("DEL");
+		tecla.setActionCommand("DEL");
+		tecla.addActionListener(ouvinte);
+		teclado.add(tecla);
+		tecla.setFocusable(false);
+		
 		tecla = new JButton("CE");
 		tecla.setActionCommand("CE");
 		tecla.addActionListener(ouvinte);
@@ -65,7 +71,13 @@ public class GUI extends JFrame implements KeyListener {
 		tecla.setFocusable(false);
 
 		tecla = new JButton("sqrt");
-		tecla.setActionCommand("RAIZ");
+		tecla.setActionCommand("RAIZ_QUADRADA");
+		tecla.addActionListener(ouvinte);
+		teclado.add(tecla);
+		tecla.setFocusable(false);
+		
+		tecla = new JButton("xÂ²");
+		tecla.setActionCommand("QUADRADO");
 		tecla.addActionListener(ouvinte);
 		teclado.add(tecla);
 		tecla.setFocusable(false);
@@ -93,6 +105,12 @@ public class GUI extends JFrame implements KeyListener {
 		tecla.addActionListener(ouvinte);
 		teclado.add(tecla);
 		tecla.setFocusable(false);
+		
+		tecla = new JButton("%");
+		tecla.setActionCommand("PORCENTAGEM");
+		tecla.addActionListener(ouvinte);
+		teclado.add(tecla);
+		tecla.setFocusable(false);
 
 		tecla = new JButton("7");
 		tecla.setActionCommand("$7");
@@ -114,6 +132,12 @@ public class GUI extends JFrame implements KeyListener {
 
 		tecla = new JButton("/");
 		tecla.setActionCommand("DIVISAO");
+		tecla.addActionListener(ouvinte);
+		teclado.add(tecla);
+		tecla.setFocusable(false);
+		
+		tecla = new JButton("y^x");
+		tecla.setActionCommand("POTENCIA");
 		tecla.addActionListener(ouvinte);
 		teclado.add(tecla);
 		tecla.setFocusable(false);
@@ -141,6 +165,12 @@ public class GUI extends JFrame implements KeyListener {
 		tecla.addActionListener(ouvinte);
 		teclado.add(tecla);
 		tecla.setFocusable(false);
+		
+		tecla = new JButton("n!");
+		tecla.setActionCommand("FATORIAL");
+		tecla.addActionListener(ouvinte);
+		teclado.add(tecla);
+		tecla.setFocusable(false);
 
 		tecla = new JButton("1");
 		tecla.setActionCommand("$1");
@@ -165,6 +195,12 @@ public class GUI extends JFrame implements KeyListener {
 		tecla.addActionListener(ouvinte);
 		teclado.add(tecla);
 		tecla.setFocusable(false);
+		
+		tecla = new JButton("pi");
+		tecla.setActionCommand("@P");
+		tecla.addActionListener(ouvinte);
+		teclado.add(tecla);
+		tecla.setFocusable(false);
 
 		tecla = new JButton("0");
 		tecla.setActionCommand("$0");
@@ -185,6 +221,11 @@ public class GUI extends JFrame implements KeyListener {
 		tecla.setActionCommand("SOMA");
 		tecla.addActionListener(ouvinte);
 		teclado.add(tecla);
+		
+		tecla = new JButton("e");
+		tecla.setActionCommand("@E");
+		tecla.addActionListener(ouvinte);
+		teclado.add(tecla);
 
 		pane.add(teclado, BorderLayout.SOUTH);
 
@@ -202,19 +243,19 @@ public class GUI extends JFrame implements KeyListener {
 
 	@Override
 	public void keyPressed(KeyEvent arg0) {
-		// TODO Stub de método gerado automaticamente
+		// TODO Stub de mÃ©todo gerado automaticamente
 
 	}
 
 	@Override
 	public void keyReleased(KeyEvent arg0) {
-		// TODO Stub de método gerado automaticamente
+		// TODO Stub de mÃ©todo gerado automaticamente
 
 	}
 
 	@Override
 	public void keyTyped(KeyEvent arg0) {
-		// TODO Stub de método gerado automaticamente
+		// TODO Stub de mÃ©todo gerado automaticamente
 
 	}
 
